@@ -9,7 +9,7 @@ const commandsPath = path.join(__dirname, 'commands');
 const commandsFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
 
 for (const file of commandsFiles) {
-  const command = await import('./commands/${file}');
+  const command = await import(`./commands/${file}`);
   client.commands.set(command.default.name, command.default)
 }
 
