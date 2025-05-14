@@ -8,12 +8,11 @@ declare module 'discord.js' {
   }
 }
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds ] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 client.commands = new Collection();
 
 
-
-// Carregando comandks
+// Carregando comandos
 const commandsPath = path.join(__dirname, 'commands');
 const commandsFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
 
@@ -25,6 +24,7 @@ async function startBot() {
   client.once('ready', () => {
     console.log('Estou online chefia');
   });
+}
 
 // Carregando eventos
 const eventsPath = path.join(__dirname, 'events')
@@ -32,14 +32,13 @@ const eventsFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts
 
 async function startEvents() {
   for (const event of eventsFiles) {
-    const command = await import(`./events/${event}`);
-    if (event.default.name && event.default.execute) {
-      client.on(event.default.name, (...args) => event.default.execute(...args, client));
+    const eventModule = await import(`./events/${event}`);
+    if (eventModule.default.name && eventModule.default.execute) {
+      client.on(eventModule.default.name, (...args) => eventModule.default.execute(...args, client));
     }
   }
-
-client.login(process.env.TOKEN)
 }
 
-
-startBot();
+startBot(); 
+startEvents();
+client.login(process.env.TOKEN);
