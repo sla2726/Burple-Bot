@@ -1,5 +1,6 @@
 import { Message, Client, EmbedBuilder } from 'discord.js';
-import { formatTime } from '../utils/formatTime.js'
+import { formatTime } from '../utils/formatTime';
+import { defaultEmbed } from '../utils/defaultEmbed'
 
 export default {
   name: 'ping',
@@ -10,25 +11,27 @@ export default {
     // Ping functions
     
     // -- Gateaway Ping 
-    const gateaway_ping = client.ws.ping;
+    const gateway_ping = client.ws.ping;
     // -- Api Ping
     const start = Date.now();
-    await client.rest.get('/gateaway');
+    await client.rest.get('/gateway');
     const apiPing = Date.now() - start;
     // -- Uptime
     const uptime = formatTime(client.uptime || 0);
-    
 
+    
     // Finalização
-    const embed = new EmbedBuilder()
-    .setTitle('Latência')
-    .setDescription(`
-    >>> **Gateaway Ping:** \`[ ${gateaway_ping}ms ]\`
-    **Api Ping:** \`[ ${apiPing}ms ]\`
-    **Uptime:** \`[ ${uptime} ]\`
-    `)
-    .setFooter({ text: `${user.username}  |  ${user.id}`, iconURL: user.displayAvatarURL() })
-    .setColor(0xff0000)
-    await message.reply({ embeds: [embed] });
+    const description = [
+      `>>> **Gateway Ping: \`[ ${gateway_ping}ms ]\``,
+      `Api Ping: \`[ ${apiPing}ms ]\``,
+      `Uptime: \`[ ${uptime} ]\`**`
+    ].join('\n')
+    
+    const success_embed = defaultEmbed(
+      'Latência',
+      description,
+      user
+    )
+    await message.reply({ embeds: [success_embed] });
   }
 }

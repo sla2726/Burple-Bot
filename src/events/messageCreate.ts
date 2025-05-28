@@ -16,7 +16,7 @@ export default {
     if (!command) return;
 
     try {
-      await command.execute(message, args);
+      await command.execute(message, args, client);
     } catch (error) {
       console.error(error);
       await message.reply("**Ocorreu um erro ao executar este comando.**");
